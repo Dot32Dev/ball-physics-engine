@@ -2,9 +2,10 @@ local intro = require("intro")
 local level = require("level")
 
 intro:init()
-love.graphics.setBackgroundColor(0.1, 0.1, 0.1)
+love.graphics.setBackgroundColor(0.1, 0.15, 0.15)
 
 local balls = {}
+local alerts = {}
 
 local function circleVsRectangle(circle, rectangle)
   local px = circle.x
@@ -40,10 +41,14 @@ function love.update()
 
 		ball.x = ball.x + xV
 		ball.y = ball.y + yV
+
+		if ball.x ~= ball.x then
+			ball.unstable = true
+		end
 	end
 
 	--[[BALL VS BALL COLLISION]]
-	for i=1, 1 do
+	for i=1, 2 do
 	for i, ball in ipairs(balls) do 
 		for i, sibling in ipairs(balls) do
 			if (ball ~= sibling) and ((ball.y-sibling.y)^2 + (ball.x-sibling.x)^2) < (ball.r+sibling.r)^2 then
@@ -57,6 +62,10 @@ function love.update()
 
 				sibling.x = sibling.x + moveLen*direction.x*-0.5
 				sibling.y = sibling.y + moveLen*direction.y*-0.5
+
+				if (ball ~= sibling) and (ball.x == sibling.x) then
+					ball.xPre = ball.xPre + (-0.5 + math.random())*0.1
+				end
 			end
 			if (ball ~= sibling) and (ball.x == sibling.x and ball.y == sibling.y) then
 				ball.xPre = ball.xPre + love.math.random()*5-2.5
@@ -86,6 +95,12 @@ function love.update()
 		end
 	end
 
+	for i=#balls, 1, -1 do
+		if balls[i].unstable then
+			table.remove(balls, i)
+		end
+	end
+
 	intro:update()
 end
 
@@ -95,12 +110,14 @@ function love.draw()
 		love.graphics.rectangle("fill", level[i].x, level[i].y, level[i].w, level[i].h)
 	end
 
-	love.graphics.setColor(0.7, 0.5, 0.2)
+	-- love.graphics.setColor(0.7, 0.5, 0.2)
 	for i=1, #balls do
+		love.graphics.setColor(balls[i].c)
 		love.graphics.circle("fill", balls[i].x, balls[i].y, balls[i].r)
 	end
 
-	intro.varToString(balls)
+	love.graphics.setColor(0.7, 0.5, 0.2)
+	-- love.graphics.print(intro.varToString(balls))
 
 	intro:draw()
 end
@@ -110,5 +127,10 @@ function love.mousepressed(x,y)
 	ball.x = x
 	ball.y = y
 	ball.r = 20
+	ball.c = intro.HSL(math.random(0, 360)/360, 0.1, math.random()/2+0.25)
 	table.insert(balls, ball)
+end
+
+function love.keypressed(k)
+	balls = (k == "r" and {}) or balls
 end
