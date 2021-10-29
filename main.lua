@@ -35,6 +35,9 @@ function love.update()
 		local xV = (ball.x - (ball.xPre or ball.x))*0.98
 		local yV = ball.y - (ball.yPre or ball.y)
 
+		local perimetre = math.pi*ball.r*2
+		ball.dir = ball.dir - xV/perimetre*math.pi*2
+
 		ball.xPre = ball.x
 		ball.yPre = ball.y
 		ball.y = ball.y + 0.5 -- gravity is 1
@@ -64,7 +67,8 @@ function love.update()
 				sibling.y = sibling.y + moveLen*direction.y*-0.5
 
 				if (ball ~= sibling) and (ball.x == sibling.x) then
-					ball.xPre = ball.xPre + (-0.5 + math.random())*0.1
+					ball.xPre = ball.xPre 
+					-- + (-0.5 + math.random())*0.1
 				end
 			end
 			if (ball ~= sibling) and (ball.x == sibling.x and ball.y == sibling.y) then
@@ -105,15 +109,20 @@ function love.update()
 end
 
 function love.draw()
-	love.graphics.setColor(0.2, 0.5, 0.7)
+	love.graphics.setColour(0.2, 0.5, 0.7)
 	for i=1, #level do
 		love.graphics.rectangle("fill", level[i].x, level[i].y, level[i].w, level[i].h)
 	end
 
-	-- love.graphics.setColor(0.7, 0.5, 0.2)
+	-- love.graphics.setColour(0.7, 0.5, 0.2)
 	for i=1, #balls do
-		love.graphics.setColor(balls[i].c)
+		love.graphics.setColour(balls[i].c)
 		love.graphics.circle("fill", balls[i].x, balls[i].y, balls[i].r)
+
+		love.graphics.setColour(0,0,0)
+		love.graphics.setLineWidth(2)
+		love.graphics.circle("line", balls[i].x, balls[i].y, balls[i].r)
+		love.graphics.line(balls[i].x, balls[i].y, balls[i].x + math.sin(balls[i].dir)*balls[i].r, balls[i].y + math.cos(balls[i].dir)*balls[i].r)
 	end
 
 	love.graphics.setColor(0.7, 0.5, 0.2)
@@ -128,6 +137,7 @@ function love.mousepressed(x,y)
 	ball.y = y
 	ball.r = 20
 	ball.c = intro.HSL(math.random(0, 360)/360, 0.1, math.random()/2+0.25)
+	ball.dir = 0
 	table.insert(balls, ball)
 end
 
