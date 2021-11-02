@@ -29,21 +29,26 @@ local function circleVsRectangle(circle, rectangle)
 	return false
 end
 
+local function setRotationsPerTick(dir, xV, yV)
+
+end
+
 function love.update()
 	--[[APPLY FORCES TO BALL]]
 	for i, ball in ipairs(balls) do
-		local xV = (ball.x - (ball.xPre or ball.x))*0.98
-		local yV = ball.y - (ball.yPre or ball.y)
+		ball.xV = (ball.x - (ball.xPre or ball.x))*0.98
+		ball.yV = ball.y - (ball.yPre or ball.y)
 
 		local perimetre = math.pi*ball.r*2
-		ball.dir = ball.dir - xV/perimetre*math.pi*2
+		ball.rotationsPerTick = - ball.xV/perimetre*math.pi*2
+		ball.dir = ball.dir + ball.rotationsPerTick
 
 		ball.xPre = ball.x
 		ball.yPre = ball.y
-		ball.y = ball.y + 0.5 -- gravity is 1
+		ball.y = ball.y + 0.5 -- gravity is 0.5
 
-		ball.x = ball.x + xV
-		ball.y = ball.y + yV
+		ball.x = ball.x + ball.xV
+		ball.y = ball.y + ball.yV
 
 		if ball.x ~= ball.x then
 			ball.unstable = true
@@ -65,11 +70,6 @@ function love.update()
 
 				sibling.x = sibling.x + moveLen*direction.x*-0.5
 				sibling.y = sibling.y + moveLen*direction.y*-0.5
-
-				if (ball ~= sibling) and (ball.x == sibling.x) then
-					ball.xPre = ball.xPre 
-					-- + (-0.5 + math.random())*0.1
-				end
 			end
 			if (ball ~= sibling) and (ball.x == sibling.x and ball.y == sibling.y) then
 				ball.xPre = ball.xPre + love.math.random()*5-2.5
@@ -81,18 +81,33 @@ function love.update()
 
 	--[[BALL VS WALL COLLISION]]
 	for i, ball in ipairs(balls) do
-		for i, rect in ipairs(level) do
-			ball.x, ball.y = circleVsRectangle(ball, level[i]) or ball.x, ball.y
+		for i, rectangle in ipairs(level) do
+			local px = ball.x
+		  local py = ball.y
+		  px = math.max(px, rectangle.x)
+		  px = math.min(px, rectangle.x + rectangle.w)
+		  py = math.max(py, rectangle.y)
+		  py = math.min(py, rectangle.y + rectangle.h)
+
+		  if ((ball.y-py)^2 + (ball.x-px)^2) < ball.r^2 then
+		  	local offset = {x = ball.x - px, y = ball.y - py}
+				local distance = math.sqrt(offset.x^2 + offset.y^2)
+				local direction = {x = offset.x/distance, y = offset.y/distance} 
+				local moveLen = ball.r - distance
+
+				ball.x = ball.x + moveLen*direction.x
+				ball.y = ball.y + moveLen*direction.y
+			end
 		end
 
-		if ball.x > love.graphics.getWidth()-ball.r then
-			ball.x = love.graphics.getWidth()-ball.r
+		if ball.x > 1280-ball.r then
+			ball.x = 1280-ball.r
 		end
 		if ball.x < ball.r then
 			ball.x = ball.r
 		end
-		if ball.y > love.graphics.getHeight()-ball.r then
-			ball.y = love.graphics.getHeight()-ball.r
+		if ball.y > 720-ball.r then
+			ball.y = 720-ball.r
 		end
 		if ball.y < ball.r then
 			ball.y = ball.r
@@ -133,11 +148,12 @@ end
 
 function love.mousepressed(x,y)
 	local ball = {}
-	ball.x = x
-	ball.y = y
+	ball.x = x -math.random()
+	ball.y = y -math.random()
 	ball.r = 20
 	ball.c = intro.HSL(math.random(0, 360)/360, 0.1, math.random()/2+0.25)
-	ball.dir = 0
+	ball.dir = math.pi
+	ball.rotationsPerTick = 0
 	table.insert(balls, ball)
 end
 
