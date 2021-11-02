@@ -139,7 +139,16 @@ function love.draw()
 		love.graphics.setColour(0,0,0)
 		love.graphics.setLineWidth(2)
 		love.graphics.circle("line", balls[i].x, balls[i].y, balls[i].r)
-		love.graphics.line(balls[i].x, balls[i].y, balls[i].x + math.sin(balls[i].dir)*balls[i].r, balls[i].y + math.cos(balls[i].dir)*balls[i].r)
+		-- love.graphics.line(balls[i].x, balls[i].y, balls[i].x + math.sin(balls[i].dir)*balls[i].r, balls[i].y + math.cos(balls[i].dir)*balls[i].r)
+		love.graphics.circle("fill", balls[i].x-math.sin(balls[i].dir-60/180*math.pi)*10, balls[i].y-math.cos(balls[i].dir-60/180*math.pi)*10, 2)
+		love.graphics.circle("fill", balls[i].x-math.sin(balls[i].dir+60/180*math.pi)*10, balls[i].y-math.cos(balls[i].dir+60/180*math.pi)*10, 2)
+		love.graphics.line(
+			balls[i].x-math.sin(balls[i].dir-120/180*math.pi)*6, balls[i].y-math.cos(balls[i].dir-120/180*math.pi)*6,
+			balls[i].x-math.sin(balls[i].dir-140/180*math.pi)*6, balls[i].y-math.cos(balls[i].dir-140/180*math.pi)*6,
+			balls[i].x-math.sin(balls[i].dir-180/180*math.pi)*6, balls[i].y-math.cos(balls[i].dir-180/180*math.pi)*6,
+			balls[i].x-math.sin(balls[i].dir-220/180*math.pi)*6, balls[i].y-math.cos(balls[i].dir-220/180*math.pi)*6,
+			balls[i].x-math.sin(balls[i].dir-240/180*math.pi)*6, balls[i].y-math.cos(balls[i].dir-240/180*math.pi)*6
+		)
 	end
 
 	love.graphics.setColor(0.7, 0.5, 0.2)
@@ -155,7 +164,7 @@ function love.mousepressed(x,y)
 	ball.r = 20
 	-- ball.c = intro.HSL(math.random(0, 360)/360, 0.1, math.random()/2+0.25)
 	ball.c = intro.HSL(math.random(0, 360)/360, 0.5, 0.5)
-	ball.dir = math.pi
+	ball.dir = 0
 	ball.rotationsPerTick = 0
 	table.insert(balls, ball)
 end
