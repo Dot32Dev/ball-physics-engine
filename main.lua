@@ -2,7 +2,8 @@ local intro = require("intro")
 local level = require("level")
 
 intro:init()
-love.graphics.setBackgroundColor(0.1, 0.15, 0.15)
+-- love.graphics.setBackgroundColor(0.1, 0.15, 0.15)
+love.graphics.setBackgroundColor(intro.HSL(220/360, 0.5, 0.1))
 
 local balls = {}
 local alerts = {}
@@ -124,7 +125,8 @@ function love.update()
 end
 
 function love.draw()
-	love.graphics.setColour(0.2, 0.5, 0.7)
+	-- love.graphics.setColour(0.2, 0.5, 0.7)
+	love.graphics.setColour(intro.HSL(220/360, 0.5, 0.4))
 	for i=1, #level do
 		love.graphics.rectangle("fill", level[i].x, level[i].y, level[i].w, level[i].h)
 	end
@@ -151,7 +153,8 @@ function love.mousepressed(x,y)
 	ball.x = x -math.random()
 	ball.y = y -math.random()
 	ball.r = 20
-	ball.c = intro.HSL(math.random(0, 360)/360, 0.1, math.random()/2+0.25)
+	-- ball.c = intro.HSL(math.random(0, 360)/360, 0.1, math.random()/2+0.25)
+	ball.c = intro.HSL(math.random(0, 360)/360, 0.5, 0.5)
 	ball.dir = math.pi
 	ball.rotationsPerTick = 0
 	table.insert(balls, ball)
