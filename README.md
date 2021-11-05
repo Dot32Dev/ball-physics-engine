@@ -1,3 +1,4 @@
 # ball-physics-engine
 a basic physics engine built on verlet integration
-<img width="707" alt="Screen Shot 2021-10-24 at 12 28 37 am" src="https://user-images.githubusercontent.com/61964090/138564278-f1d793cc-81d1-43fe-9612-bb1faef8b76a.png">
+
+<img width="701" alt="Screen Shot 2021-11-02 at 7 46 28 pm" src="https://user-images.githubusercontent.com/61964090/140467254-67855ef8-b2e3-449e-9ef1-a9dbeb8477f0.png">
