@@ -7,7 +7,6 @@ intro:init()
 love.graphics.setBackgroundColor(intro.HSL(220/360, 0.5, 0.1))
 
 local balls = {}
-local alerts = {}
 
 function love.update()
 	--[[APPLY FORCES TO BALL]]
